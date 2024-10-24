@@ -10,7 +10,11 @@ export async function createIcecream(createIceCreamBody: ICreateIceCreamBody) {
   return new Promise((resolve, reject) => {
     db.run(
       `INSERT INTO icecream (name, flavor, price) VALUES (?, ?, ?)`,
-      [createIceCreamBody.name, createIceCreamBody.flavor, createIceCreamBody.price],
+      [
+        createIceCreamBody.name,
+        createIceCreamBody.flavor,
+        createIceCreamBody.price,
+      ],
       // Change arrow function to regular function to access `this.lastID`
       function (err) {
         if (err) {
