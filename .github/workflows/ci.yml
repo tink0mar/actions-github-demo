@@ -9,40 +9,59 @@ on:
       - main
 
 jobs:
+  # First stage: Running the tests
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18' # You   can change this version if required
-      
-      - name: Install pnpm
-        run: npm -g install pnpm
+      # Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Run tests
-        run: pnpm jest
-
-  lint-and-format:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' 
+          node-version: '18'  # Change this if required
 
-      - name: Install pnpm
-        run: npm -g install pnpm
+      # Enable pnpm using corepack (comes pre-installed with Node.js 16+)
+      - name: Enable pnpm
+        run: corepack enable pnpm
 
+      # Install dependencies
       - name: Install dependencies
         run: pnpm install
 
-      - name: run ESLint
+      # Run tests using Jest
+      - name: Run tests
+        run: pnpm jest
+
+  # Second stage: Linting and formatting
+  lint-and-format:
+    runs-on: ubuntu-latest
+    needs: test  # Only run lint and format after tests pass
+    steps:
+      # Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Match this with your development environment
+
+      # Enable pnpm using corepack
+      - name: Enable pnpm
+        run: corepack enable pnpm
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install
+
+      # Run ESLint to check for linting issues
+      - name: Run ESLint
         run: pnpm lint
 
-      - name: run Prettier
+      # Run Prettier to check formatting
+      - name: Run Prettier
         run: pnpm format --check
