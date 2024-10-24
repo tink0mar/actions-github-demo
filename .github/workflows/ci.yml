@@ -1,0 +1,44 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # You can change this version if required
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm jest
+
+  lint-and-format:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' 
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: run ESLint
+        run: pnpm lint
+
+      - name: run Prettier
+        run: pnpm format --check
